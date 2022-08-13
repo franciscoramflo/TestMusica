@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+<html lang="es-mx">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Iniciar sesión - Entregas Confiables</title>
+    <link href="https://fonts.googleapis.com/css?family=Nunito:300,400,400i,600,700,800,900" rel="stylesheet">
+    <link href="~/lib/theme/css/mn-blue.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/lib/kendo-ui/styles/kendo.bootstrap-v4.min.css" />
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/kendo-ui/js/kendo.all.min.js"></script>
+    <script src="~/lib/kendo-ui/js/kendo.aspnetmvc.min.js"></script>
+    <script src="~/lib/kendo-ui/js/jszip.min.js"></script>
+
+    <script src="~/lib/kendo-ui/js/cultures/kendo.culture.es-MX.min.js"></script>
+    <script src="~/lib/kendo-ui/js/messages/kendo.messages.es-MX.min.js"></script>
+
+    <script type="text/javascript">
+        kendo.culture("es-MX");
+    </script>
+
+</head>
+<body>
+
+    <div class="auth-layout-wrap" style="background-image: url(/images/Pantalla-inicio.png);"> 
+        <div class="auth-content">
+            @RenderBody()
+        </div>
+    </div>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

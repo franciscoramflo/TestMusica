@@ -1,0 +1,88 @@
+﻿@page
+@model Musica.Web.Pages.Song.IndexModel
+@{
+
+ViewData["Title"] = "Canciones";
+//ViewData["Icon"] = "fa-exchange-alt";
+}
+
+@section PageHeader{
+    <div class="d-flex justify-content-end">
+        <a href="/Song/Create" class="btn btn-link">
+            <i class="fa fa-plus"></i><br /><span>Nuevo</span>
+        </a>
+        <button id="btnShowDeleted" class="btn btn-link">
+            <i class="fa fa-eye"></i><br /><span>Inactivos</span>
+        </button>
+        <button id="btnHideDeleted" class="btn btn-link" style="display:none">
+            <i class="fa fa-eye-slash "></i><br /><span>Ocultar inactivos</span>
+        </button>
+        <button id="btnExport" class="btn btn-link">
+            <i class="fa fa-file-export"></i><br /><span>Exportar</span>
+        </button>
+    </div>
+}
+
+
+@Html.AntiForgeryToken()
+
+<div class="card">
+    <div class="card-body">
+        <kendo-grid name="SongGrid" auto-bind="true" height="550">
+            <datasource type="DataSourceTagHelperType.Ajax" page-size="50" server-operation="false">
+                <transport>
+                    <read type="get" url="/Song/Index?handler=Read" data="SongGrid_Data" />
+                </transport>
+                <sorts>
+                    <sort field="Description" direction="asc" />
+                </sorts>
+            </datasource>
+            <pageable page-size="50" button-count="5" refresh="true"></pageable>
+            <sortable enabled="true" />
+            <filterable enabled="true" />
+            <excel file-name="Mis canciones.xlsx" />
+            <columns>
+                <column field="SongId" title=" " width="50" template="#=buttonsTemplate(SongId, Name,Active)#" html-attributes='new Dictionary<string, object>{ ["class"] = "text-center" }'>
+                    <filterable enabled="false" />
+                    <sortable enabled="false" />
+                    <exportable enabled="false" />
+                </column>
+                <column field="Name" title="Titulo" width="200" />
+                <column field="Artist" title="Grupo" width="200" />
+                <column field="Year" title="Año" width="200" />
+                <column field="Gender" title="Genero" width="200" />
+                <column field="Active" title="Activo" template="#=templateCheck(Active)#" width="65" />
+            </columns>
+
+        </kendo-grid>
+
+    </div>
+</div>
+
+@section scripts{
+
+    <script src="~/lib/test/test.grid.js" asp-append-version="true"></script>
+
+    <script>
+        var gridName = "SongGrid";
+        var baseDirectory = "/Song";
+        var showDeleted = false;
+
+        $(function () {
+            var title = $("#titleSection");
+            var header = $("#headerSection");
+
+            title.removeClass("col-md-5");
+            title.addClass("col-md-7");
+            header.removeClass("col-md-7");
+            header.addClass("col-md-5");
+        });
+
+        function SongGrid_Data() {
+            return {
+                showDeleted: showDeleted
+            }
+        }
+
+    </script>
+}

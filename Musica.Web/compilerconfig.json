@@ -1,0 +1,14 @@
+﻿[
+  {
+    "outputFile": "wwwroot/lib/theme/lite-blue.css",
+    "inputFile": "wwwroot/lib/theme/lite-blue.scss"
+  },
+  {
+    "outputFile": "wwwroot/lib/theme/css/lite-blue.css",
+    "inputFile": "wwwroot/lib/theme/css/lite-blue.scss"
+  },
+  {
+    "outputFile": "wwwroot/lib/theme/css/mn-blue.css",
+    "inputFile": "wwwroot/lib/theme/css/mn-blue.scss"
+  }
+]

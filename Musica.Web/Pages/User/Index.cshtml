@@ -1,0 +1,132 @@
+﻿@page
+@model Musica.Web.Pages.User.IndexModel
+
+@{
+    ViewData["Title"] = "Usuarios";
+}
+
+
+@section PageHeader{
+        <div class="d-flex justify-content-end">
+            <a href="/User/Create" class="btn btn-link" title="Nuevo">
+                <i class="fa fa-plus"></i><br /><span>Nuevo</span>
+            </a>
+            <button id="btnShowDeleted" class="btn btn-link" title="Mostrar inactivos">
+                <i class="fa fa-eye"></i><br /><span>Inactivos</span>
+            </button>
+            <button id="btnHideDeleted" class="btn btn-link" style="display:none" title="Ocultar inactivos">
+                <i class="fa fa-eye-slash "></i><br /><span>Ocultar inactivos</span>
+            </button>
+            <button id="btnExport" class="btn btn-link" title="Exportar">
+                <i class="fa fa-file-export"></i><br /><span>Exportar</span>
+            </button>
+        </div>
+}
+
+@Html.AntiForgeryToken()
+
+<div class="card">
+    <div class="card-body">
+        <kendo-grid name="userGrid" height="550" selectable="single">
+            <datasource type="DataSourceTagHelperType.Ajax" server-operation="false">
+                <transport>
+                    <read type="get" url="/User/Index?handler=Read" data="userGrid_Data" />
+                </transport>
+                <sorts>
+                    <sort field="Name" direction="Ascending"  />
+                </sorts>
+            </datasource>
+            <sortable enabled="true" />            
+            <filterable enabled="true" />
+            <pageable page-size="50" button-count="5" refresh="true">
+            </pageable>
+            <excel file-name="Usuarios.xlsx" />            
+            <columns>
+                <column field="UserId" title=" " width="75" template="#=buttonsTemplate(UserId, Name,Active)#" html-attributes='new Dictionary<string, object>{ ["class"] = "text-center" }'>
+                    <filterable enabled="false" />
+                    <sortable enabled="false" />
+                </column>
+                <column field="UserName" title="Usuario" width="180" />
+                <column field="Name" title="Nombre" width="290" />
+                <column field="Email" title="Correo eletrónico" width="230" />
+                <column field="PhoneNumber" title="Teléfono" width="140" />
+                <column field="Active" title="Activo" template="#=templateCheck(Active)#" width="120" />
+                <column field="Profile" title="Perfil" width="140" />
+            </columns>
+            
+        </kendo-grid>
+
+    </div>
+</div>
+
+@section scripts{
+
+    <script src="~/lib/test/test.utils.js" asp-append-version="true"></script>
+    <script src="~/lib/test/test.grid.js" asp-append-version="true"></script>
+
+
+    <script>
+        var gridName = "userGrid";
+        var baseDirectory = "/User";
+        var showDeleted = false;
+
+        $(function () {
+            $("#btnChangePassword").bind("click", btnChangePassword_OnClick);
+            $("#btnShowDeleted").bind("click", btnShowDeleted_OnClick);
+            $("#btnHideDeleted").bind("click", btnHideDeleted_OnClick);
+
+            var grid = $("#userGrid").data("kendoGrid");
+            grid.bind("dataBound", grid_dataBound);
+            grid.dataSource.fetch();
+
+        });
+
+        function btnChangePassword_OnClick() {
+            var grid = $("#userGrid").data("kendoGrid");
+            var selectedItem = grid.dataItem(grid.select());
+
+            if (selectedItem) {
+                window.location = "/User/ChangePassword?id=" + selectedItem.UserId;
+            } else {
+                showMessageModal("¡No ha seleccionado ningún elemento del grid!");
+            }
+        }
+
+        function btnShowDeleted_OnClick() {
+            $("#btnShowDeleted").hide();
+            $("#btnHideDeleted").show();
+
+            showDeleted = true;
+            var grid = $("#userGrid").data("kendoGrid");
+            grid.dataSource.read();
+        }
+
+        function btnHideDeleted_OnClick() {
+            $("#btnShowDeleted").show();
+            $("#btnHideDeleted").hide();
+
+            showDeleted = false;
+            var grid = $("#userGrid").data("kendoGrid");
+            grid.dataSource.read();
+        }
+
+        function userGrid_Data() {
+            return {
+                showDeleted: showDeleted
+            }
+        }
+
+        function grid_dataBound(e) {
+            var items = e.sender.items();
+            items.each(function (index) {
+                var grid = $("#userGrid").data("kendoGrid");
+                var dataItem = grid.dataItem(this);
+                if (dataItem.Active!=true) {
+                    this.className += "row-deleted";
+                }
+                
+            })
+        }
+
+    </script>
+}

@@ -1,0 +1,75 @@
+﻿@page
+@model Musica.Web.Pages.Song.CreateModel
+@{
+    ViewData["Title"] = "Canciones - Crear ";
+}
+
+
+<div class="col-md-12">
+    <div class="card">
+        <div class="card-body">
+            <form method="post" id="SongForm">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group sharedForm">
+                    <label asp-for="Song.Name"></label>
+                    <input asp-for="Song.Name" class="form-control" />
+                    <span asp-validation-for="Song.Name" class="text-danger k-invalid-msg" data-for="Description"></span>
+                </div>
+                <div class="form-group sharedForm">
+                    <label asp-for="Song.Artist"></label>
+                    <input asp-for="Song.Artist" class="form-control" />
+                    <span asp-validation-for="Song.Artist" class="text-danger k-invalid-msg" data-for="Description"></span>
+                </div>
+                <div class="form-group sharedForm">
+                    <label asp-for="Song.Year"></label>
+                    <input asp-for="Song.Year" class="form-control" />
+                    <span asp-validation-for="Song.Year" class="text-danger k-invalid-msg" data-for="Description"></span>
+                </div>
+                <div class="form-group sharedForm">
+                    <label asp-for="Song.Gender"></label>
+                    <input asp-for="Song.Gender" class="form-control" />
+                    <span asp-validation-for="Song.Gender" class="text-danger k-invalid-msg" data-for="Description"></span>
+                </div>
+
+
+                <div class="col-12 row d-flex">
+                    <a id="btnGoBack" class="btn btn-link ">Regresar</a>
+                    <button id="btnSave" type="button" class="btn btn-success ml-auto">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+
+@section scripts{
+    <script src="~/lib/test/test.utils.js" asp-append-version="true"></script>
+
+    <script>
+
+        $(document).ready(function () {
+            $("#SongForm").kendoValidator();
+            $("#btnSave").bind("click", saveForm);
+            $("#btnSave").prop("disabled", false);
+
+            var title = $("#titleSection");
+
+            title.removeClass("col-md-5");
+            title.addClass("col-md-7");
+        });
+
+        function saveForm() {
+            $("#btnSave").prop("disabled", true);
+            if ($("#SongForm").data("kendoValidator").validate() == true) {
+                $("#SongForm").submit();
+            }
+            else {
+                $("#btnSave").prop("disabled", false);
+            }
+        }
+
+
+    </script>
+}

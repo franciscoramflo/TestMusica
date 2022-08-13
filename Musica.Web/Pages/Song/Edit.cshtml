@@ -1,0 +1,73 @@
+﻿@page
+@model Musica.Web.Pages.Song.EditModel
+@{
+    ViewData["Title"] = "Canciones - " + (Model.Song.Active ? "Editar" : "Detalle");
+}
+
+
+<div class="col-md-12 d-none" id="formContainer">
+    <div class="card">
+        <div class="card-body">
+            <form method="post" id="SongForm" asp-page-handler="Song">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Song.SongId" />
+                <input type="hidden" asp-for="Song.Active" />
+
+                <div class="form-group sharedForm">
+                    <label asp-for="Song.Name"></label>
+                    <input asp-for="Song.Name" class="form-control" />
+                    <span asp-validation-for="Song.Name" class="text-danger k-invalid-msg" data-for="Description"></span>
+                </div>
+                <div class="form-group sharedForm">
+                    <label asp-for="Song.Artist"></label>
+                    <input asp-for="Song.Artist" class="form-control" />
+                    <span asp-validation-for="Song.Artist" class="text-danger k-invalid-msg" data-for="Description"></span>
+                </div>
+                <div class="form-group sharedForm">
+                    <label asp-for="Song.Year"></label>
+                    <input asp-for="Song.Year" class="form-control" />
+                    <span asp-validation-for="Song.Year" class="text-danger k-invalid-msg" data-for="Description"></span>
+                </div>
+                <div class="form-group sharedForm">
+                    <label asp-for="Song.Gender"></label>
+                    <input asp-for="Song.Gender" class="form-control" />
+                    <span asp-validation-for="Song.Gender" class="text-danger k-invalid-msg" data-for="Description"></span>
+                </div>
+
+                <div class="col-12 row d-flex">
+                    <a id="btnGoBack" class="btn btn-link ">Regresar</a>
+                    <input type="submit" value="Actualizar" class="btn btn-success ml-auto" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@section scripts{
+
+    <script src="~/lib/test/test.grid.js" asp-append-version="true"></script>
+    <script src="~/lib/test/test.utils.js" asp-append-version="true"></script>
+
+    <script>
+        $(document).ready(function () {
+            $("#SongForm").kendoValidator();
+            
+            $('#formContainer').removeClass("d-none");     
+
+            var title = $("#titleSection");
+
+            title.removeClass("col-md-5");
+            title.addClass("col-md-7");
+        })
+
+        function forgeryToken() {
+            return kendo.antiForgeryTokens();
+        }
+
+
+    </script>
+}

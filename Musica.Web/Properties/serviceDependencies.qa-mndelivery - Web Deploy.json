@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "mssql2": {
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/nsdsrv01/databases/qa-Musica",
+      "type": "mssql.azure",
+      "connectionId": "azuredm",
+      "secretStore": "AzureAppSettings"
+    }
+  }
+}

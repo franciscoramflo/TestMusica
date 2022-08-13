@@ -1,0 +1,254 @@
+﻿@page
+@model Musica.Web.Pages.User.EditModel
+
+@{
+    ViewData["Title"] = "Usuario - Editar";
+}
+
+<div class="col-md-12">
+
+    <div class="card">
+        <div class="card-body">
+            <form method="post" id="UserForm">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="userModel.UserId" />
+                <br />
+                <fieldset>
+                    <legend class="font-weight-semibold"><i class="icon-users mr-2"></i> Perfil</legend>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col-12">
+                                    @(Html.Kendo().SwitchFor(model=>model.userModel.IsAdministrator))
+                                    <label for="userModel.IsAdministrator">Administrador</label>
+                                </div>
+                               
+                            </div>
+                        </div>
+                        
+                    </div>
+                </fieldset>
+                <br />
+                <fieldset>
+                    <legend class="font-weight-semibold"> General</legend>
+                    
+                    <div class="form-group">
+                        <label asp-for="userModel.Name"></label>
+                        @(Html.Kendo().TextBoxFor(model=>model.userModel.Name).HtmlAttributes(new { style = "width: 100%", notMusicaRequired = true }))
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="userModel.PhoneNumber"></label>
+                        @(Html.Kendo().TextBoxFor(model=>model.userModel.PhoneNumber).HtmlAttributes(new { style = "width: 100%", notMusicaRequired = true }))
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="userModel.Email"></label>
+                        <input asp-for="userModel.Email" class="form-control" autocomplete="off" />
+                        <span asp-validation-for="userModel.Email" class="text-danger k-invalid-msg"></span>
+                    </div>
+
+                </fieldset>
+
+                <fieldset>
+                    <legend class="font-weight-semibold"><i class="icon-key mr-2"></i> Acceso</legend>
+                    <div class="form-group">
+                        <label asp-for="userModel.UserName"></label>
+                        <input asp-for="userModel.UserName" class="form-control" autocomplete="off" />
+                        <span asp-validation-for="userModel.UserName" class="text-danger k-invalid-msg"></span>
+                    </div>
+                    <br />
+                    <div class="alert alert-info">
+                        <strong>Instrucciones: </strong>A continuación escriba la nueva contraseña para cambiarla. En caso de que no desee cambiar la contraseña, puede dejar vacío el campo.
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="userModel.Password"></label>
+                        <input asp-for="userModel.Password" class="form-control" autocomplete="new-password" />
+                        <span asp-validation-for="userModel.Password" class="text-danger k-invalid-msg" data-for="Password"></span>
+                    </div>
+                </fieldset>
+
+                <br />
+                <div class="form-group d-flex">
+                    <a asp-page="Index" class="btn btn-link">Regresar</a>
+                    <input type="submit" value="Actualizar" class="btn btn-success ml-auto" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+
+    <script src="~/lib/test/test.utils.js" asp-append-version="true"></script>
+
+
+    <script>
+        $(document).ready(function () {
+            $("#UserForm").kendoValidator({
+                messages: {
+                    // defines a message for the custom validation rule
+                    MusicaRequired: "Este campo es requerido para el personal con un rol de reparto asignado.",
+                    notMusicaRequired: "Este campo es requerido para el personal sin ningun rol de reparto asignado."
+                },
+                rules: {
+                    MusicaRequired: function (input) {
+                        if (input.is("[MusicaRequired]")) {//you can use other attributes (inlcuding data-* attributes)
+
+                            if ($('#userModel_IsMusicaChief').data("kendoSwitch").value() || $('#userModel_IsOperator').data("kendoSwitch").value()) {
+
+                                var currVal = "";
+                                var widget = kendo.widgetInstance(input);
+                                if (widget && widget.value) {
+                                    currVal = widget.value();
+                                } else {
+                                    currVal = input.val();
+                                }
+                                if (typeof currVal === "object" && currVal instanceof Array) {//check for arrays - e.g., for a MultiSelect
+                                    return currVal.length > 0;
+                                }
+                                if (!currVal) {//primitive types like strings and numbers can be evaluated with a simple bool check like this
+                                    return false;
+                                }
+                                return true;
+                            }
+                        } else {
+                            true
+                        }
+                        return true;
+                    },
+                    notMusicaRequired: function (input) {
+                        if (input.is("[notMusicaRequired]")) {//you can use other attributes (inlcuding data-* attributes)
+
+                            if (!$('#userModel_IsMusicaChief').data("kendoSwitch").value() && !$('#userModel_IsOperator').data("kendoSwitch").value() && !$('#userModel_IsMusicaaux').data("kendoSwitch").value()) {
+
+                                var currVal = "";
+                                var widget = kendo.widgetInstance(input);
+                                if (widget && widget.value) {
+                                    currVal = widget.value();
+                                } else {
+                                    currVal = input.val();
+                                }
+                                if (typeof currVal === "object" && currVal instanceof Array) {//check for arrays - e.g., for a MultiSelect
+                                    return currVal.length > 0;
+                                }
+                                if (!currVal) {//primitive types like strings and numbers can be evaluated with a simple bool check like this
+                                    return false;
+                                }
+                                return true;
+                            }
+                        } else {
+                            true
+                        }
+                        return true;
+                    }
+                }
+            });
+
+
+            $('#userModel_IsAdministrator').data("kendoSwitch").bind("change", function () {
+                if ($('#userModel_IsAdministrator').data("kendoSwitch").value()) {
+                    disableRoleCheckboxes(true);
+                    disableStaffFields(false);
+                } else {
+                    disableRoleCheckboxes(false);
+                }
+            });
+
+            $('#userModel_IsMusicaChief').data("kendoSwitch").bind("change", function () {
+                disableControlsForMusicaStaff();
+            });
+
+            $('#userModel_IsOperator').data("kendoSwitch").bind("change", function () {
+                disableControlsForMusicaStaff();
+            });
+
+            $('#userModel_IsMusicaAux').data("kendoSwitch").bind("change", function () {
+                disableControlsForMusicaStaff();
+            });
+
+            $("#userModel_StaffId").data("kendoComboBox").bind("change", staffId_change);
+
+
+        });
+
+        function disableControlsForMusicaStaff() {
+            if ($('#userModel_IsMusicaChief').data("kendoSwitch").value() || $('#userModel_IsOperator').data("kendoSwitch").value() || $('#userModel_IsMusicaAux').data("kendoSwitch").value()) {
+                disableStaffFields(true);
+            } else {
+                disableStaffFields(false);
+            }
+        }
+
+        function disableRoleCheckboxes(disable) {
+            if (disable) {
+                $('#userModel_IsManager').data("kendoSwitch").readonly(true);
+                $('#userModel_IsMusicaAux').data("kendoSwitch").readonly(true);
+                $('#userModel_IsMusicaChief').data("kendoSwitch").readonly(true);
+                $('#userModel_IsOperator').data("kendoSwitch").readonly(true);
+                $('#userModel_IsSales').data("kendoSwitch").readonly(true);
+                $('#userModel_IsWholeSaler').data("kendoSwitch").readonly(true);
+
+                $('#userModel_IsManager').data("kendoSwitch").value(false);
+                $('#userModel_IsMusicaChief').data("kendoSwitch").value(false);
+                $('#userModel_IsMusicaAux').data("kendoSwitch").value(false);
+                $('#userModel_IsOperator').data("kendoSwitch").value(false);
+                $('#userModel_IsSales').data("kendoSwitch").value(false);
+                $('#userModel_IsWholeSaler').data("kendoSwitch").value(false);
+
+            } else {
+                $('#userModel_IsManager').data("kendoSwitch").readonly(false);
+                $('#userModel_IsMusicaAux').data("kendoSwitch").readonly(false);
+                $('#userModel_IsSales').data("kendoSwitch").readonly(false);
+                $('#userModel_IsMusicaChief').data("kendoSwitch").readonly(false);
+                $('#userModel_IsOperator').data("kendoSwitch").readonly(false);
+                $('#userModel_IsWholeSaler').data("kendoSwitch").readonly(false);
+
+                $('#userModel_IsManager').data("kendoSwitch").value(false);
+                $('#userModel_IsMusicaAux').data("kendoSwitch").value(false);
+                $('#userModel_IsSales').data("kendoSwitch").value(false);
+                $('#userModel_IsMusicaChief').data("kendoSwitch").value(false);
+                $('#userModel_IsOperator').data("kendoSwitch").value(false);
+                $('#userModel_IsWholeSaler').data("kendoSwitch").value(false);
+            }
+        }
+
+        function disableStaffFields(disable) {
+            $("#UserForm").kendoValidator().data("kendoValidator").hideMessages();
+            $("#userModel_Name").data("kendoTextBox").readonly(true);
+            $("#userModel_PhoneNumber").data("kendoTextBox").readonly(true);
+            if (disable) {
+                $("#userModel_StaffId").data("kendoComboBox").enable(true);
+                $("#userModel_Name").data("kendoTextBox").readonly(true);
+                $("#userModel_PhoneNumber").data("kendoTextBox").readonly(true);
+            } else {
+                $("#userModel_StaffId").data("kendoComboBox").value("");
+                $("#userModel_StaffId").data("kendoComboBox").enable(false);
+                $("#userModel_Name").data("kendoTextBox").readonly(false);
+                $("#userModel_PhoneNumber").data("kendoTextBox").readonly(false);
+            }
+        }
+
+        function staffId_change() {
+            var combobox = $("#userModel_StaffId").data("kendoComboBox");
+
+            $.ajax({
+                type: "GET",
+                url: "/Staff/Combo?handler=StaffById",
+                data: {
+                    id: combobox.value()
+                },
+                success: function (data) {
+                    if (data.Success) {
+                        $("#userModel_Name").val(data.Name);
+                        $("#userModel_PhoneNumber").val(data.Phone);
+                    }
+                    else {
+                        showMessageModal(data.Message, "info");
+                        return;
+                    }
+                }
+            });
+        }
+
+    </script>
+}
