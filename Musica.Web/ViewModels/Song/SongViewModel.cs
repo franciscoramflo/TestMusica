@@ -11,11 +11,11 @@ namespace Musica.Web.ViewModels.Song
         public int SongId { get; set; }
 
         [Required(ErrorMessage = "FieldRequired")]
-        [Display(Name = "Canción")]
+        [Display(Name = "Título")]
         public string Name { get; set; }
 
         [Required(ErrorMessage = "FieldRequired")]
-        [Display(Name = "Artista")]
+        [Display(Name = "Grupo")]
         public string Artist { get; set; }
 
         [Required(ErrorMessage = "FieldRequired")]
@@ -23,7 +23,7 @@ namespace Musica.Web.ViewModels.Song
         public int Year { get; set; }
 
         [Required(ErrorMessage = "FieldRequired")]
-        [Display(Name = "Genero")]
+        [Display(Name = "Género")]
         public string Gender { get; set; }
 
         public bool Active { get; set; }
